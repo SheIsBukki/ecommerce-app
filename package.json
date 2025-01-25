@@ -1,5 +1,5 @@
 {
-  "name": "e-commerce-app",
+  "name": "ecommerce-app",
   "version": "0.1.0",
   "private": true,
   "scripts": {
@@ -9,10 +9,22 @@
     "lint": "next lint"
   },
   "dependencies": {
+    "@oslojs/crypto": "^1.0.1",
+    "@oslojs/encoding": "^1.1.0",
     "@prisma/client": "^6.2.1",
+    "@sanity/image-url": "^1.1.0",
+    "@sanity/vision": "^3.70.0",
+    "dayjs": "^1.11.13",
+    "lucide-react": "^0.473.0",
+    "moment": "^2.30.1",
     "next": "15.1.4",
+    "next-sanity": "^9.8.38",
     "react": "^19.0.0",
     "react-dom": "^19.0.0",
+    "react-icons": "^5.4.0",
+    "sanity": "^3.70.0",
+    "stripe": "^17.5.0",
+    "styled-components": "^6.1.14",
     "zod": "^3.24.1",
     "zustand": "^5.0.3"
   },
@@ -23,7 +35,10 @@
     "@types/react-dom": "^19",
     "eslint": "^9",
     "eslint-config-next": "15.1.4",
+    "eslint-plugin-no-relative-import-paths": "^1.6.1",
     "postcss": "^8",
+    "prettier": "^3.4.2",
+    "prettier-plugin-tailwindcss": "^0.6.10",
     "prisma": "^6.2.1",
     "tailwindcss": "^3.4.1",
     "typescript": "^5"
