@@ -16,7 +16,10 @@ const SignInPage = async () => {
     return redirect("/");
   }
 
-  const action = async (previousState: any, formData: FormData) => {
+  const action = async (
+    previousState: { message: string } | undefined,
+    formData: FormData,
+  ) => {
     "use server";
 
     const parsed = SignInSchema.safeParse(Object.fromEntries(formData));

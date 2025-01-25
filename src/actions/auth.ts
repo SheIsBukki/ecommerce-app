@@ -161,6 +161,7 @@ export const registerUser = async (email: string, password: string) => {
 
     return { user: safeUser, error: null };
   } catch (error) {
+    console.log(error)
     return { user: null, error: "Failed to register user" };
   }
 };
