@@ -46,6 +46,7 @@ model CartLineItem {
 
 model Cart {
   id     String  @id
+  
   userId String? @unique
   user   User?   @relation(references: [id], fields: [userId], onDelete: Cascade)
 
