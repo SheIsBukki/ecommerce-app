@@ -5,10 +5,11 @@ import {
   encodeHexLowerCase,
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import type { User, Session } from "@prisma/client";
+// import type { User, Session } from "@prisma/client";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import prisma from "@/lib/prisma";
+import { Session, User } from "@prisma/client";
 
 /* SESSION */
 
@@ -161,7 +162,7 @@ export const registerUser = async (email: string, password: string) => {
 
     return { user: safeUser, error: null };
   } catch (error) {
-    console.log(error)
+    console.log(error);
     return { user: null, error: "Failed to register user" };
   }
 };
