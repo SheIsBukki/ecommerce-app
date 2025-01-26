@@ -5,7 +5,7 @@ import Stripe from "stripe";
 import prisma from "@/lib/prisma";
 
 export async function POST(req: Request) {
-  // Get Stripe cliient
+  // Get Stripe client
 
   const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
     apiVersion: "2024-12-18.acacia",
@@ -38,7 +38,7 @@ export async function POST(req: Request) {
     try {
       event = stripe.webhooks.constructEvent(body, signature, webhookSecret);
     } catch (e) {
-      console.log("Event could not be contructed");
+      console.log("Event could not be constructed");
       console.log(e);
       return NextResponse.json({ error: "Invalid signature" }, { status: 400 });
     }
@@ -66,7 +66,7 @@ export async function POST(req: Request) {
         await sanityClient.create({
           _type: "order",
           orderNumber: session.id.slice(-8).toUpperCase(),
-          orderDate: new Date().toISOString,
+          orderDate: new Date().toISOString(),
           customerId: userId !== "-" ? userId : undefined,
           customerEmail: session.customer_details?.email,
           customerName: session.customer_details?.name,
@@ -110,8 +110,15 @@ export async function POST(req: Request) {
         break;
       }
     }
+
+    return NextResponse.json({ success: true });
   } catch (e) {
     console.log("Something went wrong!");
     console.log(e);
+
+    return NextResponse.json(
+      { error: "Webhook handler failed" },
+      { status: 500 },
+    );
   }
 }
