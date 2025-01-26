@@ -17,7 +17,7 @@ const SignInPage = async () => {
   }
 
   const action = async (
-    previousState: { message: string } | undefined,
+    previousState: any,
     formData: FormData,
   ) => {
     "use server";

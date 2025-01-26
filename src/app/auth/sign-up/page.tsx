@@ -16,10 +16,7 @@ const SignUpPage = async () => {
     return redirect("/");
   }
 
-  const action = async (
-    previousState: { message: string } | undefined,
-    formData: FormData,
-  ) => {
+  const action = async (previousState: any, formData: FormData) => {
     "use server";
 
     const parsed = SignUpSchema.safeParse(Object.fromEntries(formData));

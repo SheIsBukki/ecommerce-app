@@ -8,7 +8,7 @@ const initialState = { message: "" };
 
 type SignInProps = {
   action: (
-    previousState: { message: string } | undefined,
+    previousState: any,
     formData: FormData,
   ) => Promise<{ message: string } | undefined>;
 };
