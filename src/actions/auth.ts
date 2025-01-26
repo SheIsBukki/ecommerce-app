@@ -5,7 +5,7 @@ import {
   encodeHexLowerCase,
 } from "@oslojs/encoding";
 import { sha256 } from "@oslojs/crypto/sha2";
-import { User, Session } from "@prisma/client";
+import type { User, Session } from "@prisma/client";
 import { cookies } from "next/headers";
 import { cache } from "react";
 import prisma from "@/lib/prisma";
