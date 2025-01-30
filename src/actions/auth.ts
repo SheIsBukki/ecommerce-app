@@ -22,7 +22,7 @@ export async function generateSessionToken(): Promise<string> {
 
 export async function createSession(
   token: string,
-  userId: string,
+  userId: number,
 ): Promise<Session> {
   const sessionId = encodeHexLowerCase(sha256(new TextEncoder().encode(token)));
 

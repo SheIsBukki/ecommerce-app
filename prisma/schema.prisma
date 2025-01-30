@@ -14,7 +14,7 @@ datasource db {
 }
 
 model User {
-  id           String @id @default(cuid())
+  id           Int @id @default(autoincrement())
   passwordHash String
   email        String @unique
 
@@ -25,7 +25,7 @@ model User {
 
 model Session {
   id        String   @id
-  userId    String
+  userId    Int
   expiresAt DateTime
 
   user User @relation(references: [id], fields: [userId], onDelete: Cascade)
@@ -47,7 +47,7 @@ model CartLineItem {
 model Cart {
   id     String  @id
   
-  userId String? @unique
+  userId Int? @unique
   user   User?   @relation(references: [id], fields: [userId], onDelete: Cascade)
 
   items CartLineItem[]

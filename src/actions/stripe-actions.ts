@@ -28,7 +28,7 @@ export const createCheckoutSession = async (cartId: string) => {
       price_data: {
         currency: "usd",
         product_data: { name: item.title, images: [item.image] },
-        unit_amount: Math.round(item.price * 100), // Stripe uses the lowwest unit of a currency, and in this, it is cents, since 100 cents make a dollar, the price is multiplied by 100 to get the cents equivalent — Hence, $100.5 is $1.005 in cents
+        unit_amount: Math.round(item.price * 100), // Stripe uses the lowest unit of a currency, and in this, it is cents, since 100 cents make a dollar, the price is multiplied by 100 to get the cents equivalent — Hence, $100.5 is $1.005 in cents
       },
       quantity: item.quantity,
     })),
