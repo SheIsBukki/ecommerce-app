@@ -22,6 +22,7 @@ const ProductItem = ({ product }: ProductItemProps) => {
             src={urlFor(product?.image).width(256).url()}
             className="object-contain p-2"
             loading="lazy"
+            sizes="(min-width: 808px) 50vw, 100vw"
           />
         )}
       </figure>

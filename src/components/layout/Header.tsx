@@ -93,6 +93,7 @@ export default function Header({ user, categorySelector }: HeaderProps) {
             <div className="flex flex-1 items-center justify-end gap-2 sm:gap-4">
               <HeaderSearchBar />
 
+              {/* Log out functionality */}
               {user ? (
                 <React.Fragment>
                   <div className="flex items-center gap-2 sm:gap-4">
