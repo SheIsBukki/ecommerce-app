@@ -3,6 +3,7 @@ import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import prisma from "@/lib/prisma";
+import { umamiTrackCheckoutSuccessEvent } from "@/lib/umami";
 
 export async function POST(req: Request) {
   // Get Stripe client
@@ -63,7 +64,7 @@ export async function POST(req: Request) {
           throw new Error("Cart not found");
         }
 
-        await sanityClient.create({
+        const order = await sanityClient.create({
           _type: "order",
           orderNumber: session.id.slice(-8).toUpperCase(),
           orderDate: new Date().toISOString(),
@@ -96,6 +97,20 @@ export async function POST(req: Request) {
           })),
           status: "PROCESSING",
         });
+
+        /** Umami tracking */
+        try {
+          await umamiTrackCheckoutSuccessEvent({
+            cartId: cartId,
+            email: order.customerEmail || "-",
+            orderId: order.orderNumber,
+            orderTotal: order.totalPrice,
+            orderCurrency: "USD",
+          });
+        } catch (e) {
+          console.log("Umami tracking error");
+          console.log(e);
+        }
 
         // Delete the cart
         await prisma.cart.delete({

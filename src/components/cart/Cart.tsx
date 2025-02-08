@@ -2,14 +2,92 @@
 
 import { useEffect, useMemo, useState } from "react";
 import Link from "next/link";
-import { useCartStore } from "@/stores/cart-store";
 import { useShallow } from "zustand/shallow";
 import { Loader2, ShoppingCart, X } from "lucide-react";
 import Image from "next/image";
-import { formatPrice } from "@/lib/utils";
+
+import {
+  useCartStore,
+  type CartItem as CartItemType,
+} from "@/stores/cart-store";
 import { createCheckoutSession } from "@/actions/stripe-actions";
+import { formatPrice } from "@/lib/utils";
 
 const freeShippingAmount = 50; // $15 for free shipping
+
+// This CartItem allows the creation of a functionality that limit wheel product win to only one item, preventing users from increasing the quantity of the product they win
+const CartItem = ({ item }: { item: CartItemType }) => {
+  const { updateQuantity, remoteItem } = useCartStore(
+    useShallow((state) => ({
+      updateQuantity: state.updateQuantity,
+      remoteItem: state.removeItem,
+    })),
+  );
+
+  const isFreeItem = item.price === 0;
+
+  return (
+    <div
+      key={`cart-item-${item.id}`}
+      className="flex gap-4 p-4 hover:bg-gray-50"
+    >
+      <div className="relative size-20 flex-shrink-0 overflow-hidden rounded-lg border">
+        <Image
+          src={item.image}
+          alt={item.title}
+          fill
+          className="object-cover"
+        />
+      </div>
+
+      <div className="min-w-0 flex-1">
+        <h3 className="truncate font-medium text-gray-900">{item.title}</h3>
+
+        <div className="mt-1 text-sm text-gray-500">
+          {isFreeItem ? (
+            <span className="font-medium text-emerald-600">FREE</span>
+          ) : (
+            formatPrice(item.price)
+          )}
+        </div>
+
+        <div className="mt-2 flex items-center gap-3">
+          {isFreeItem ? (
+            <div className="text-sm font-medium text-emerald-600">
+              Prise Item
+            </div>
+          ) : (
+            <>
+              <select
+                value={item.quantity}
+                onChange={(event) =>
+                  updateQuantity(item.id, Number(event.target.value))
+                }
+                className="rounded-md border px-2 py-1"
+              >
+                {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
+                  <option
+                    key={`cart-quantity-select-${item.id}-${num}`}
+                    value={num}
+                  >
+                    {num}
+                  </option>
+                ))}
+              </select>
+
+              <button
+                className="text-sm text-red-500 hover:text-red-600"
+                onClick={() => remoteItem(item.id)}
+              >
+                Remove
+              </button>
+            </>
+          )}
+        </div>
+      </div>
+    </div>
+  );
+};
 
 const Cart = () => {
   const {
@@ -58,6 +136,20 @@ const Cart = () => {
     setLoadingProceed(true);
 
     const checkoutUrl = await createCheckoutSession(cartId);
+
+    /** Umami Tracking*/
+    try {
+      const anyWindow = window as any;
+
+      if (anyWindow.umami) {
+        anyWindow.umami.track("proceed_to_checkout", {
+          cartId: cartId,
+          totalPrice: getTotalPrice(),
+          currency: "USD",
+        });
+      }
+    } catch (e) {}
+
     window.location.href = checkoutUrl;
 
     setLoadingProceed(false);
@@ -126,55 +218,7 @@ const Cart = () => {
             ) : (
               <div className="divide-y">
                 {items.map((item) => (
-                  <div
-                    key={`cart-item-${item.id}`}
-                    className="flex gap-4 p-4 hover:bg-gray-50"
-                  >
-                    <div className="relative size-20 flex-shrink-0 overflow-hidden rounded-lg border">
-                      <Image
-                        src={item.image}
-                        alt={item.title}
-                        fill
-                        className="object-cover"
-                      />
-                    </div>
-
-                    <div className="min-w-0 flex-1">
-                      <h3 className="truncate font-medium text-gray-900">
-                        {item.title}
-                      </h3>
-
-                      <div className="mt-1 text-sm text-gray-500">
-                        {formatPrice(item.price)}
-                      </div>
-
-                      <div className="mt-2 flex items-center gap-3">
-                        <select
-                          value={item.quantity}
-                          onChange={(e) =>
-                            updateQuantity(item.id, Number(e.target.value))
-                          }
-                          className="rounded-md border px-2 py-1"
-                        >
-                          {[1, 2, 3, 4, 5, 6, 7, 8, 9, 10].map((num) => (
-                            <option
-                              key={`cart-quantity-select-${item.id}-${num}`}
-                              value={num}
-                            >
-                              {num}
-                            </option>
-                          ))}
-                        </select>
-
-                        <button
-                          className="text-sm text-red-500 hover:text-red-600"
-                          onClick={() => remoteItem(item.id)}
-                        >
-                          Remove
-                        </button>
-                      </div>
-                    </div>
-                  </div>
+                  <CartItem key={"cart-item-" + item.id} item={item} />
                 ))}
               </div>
             )}

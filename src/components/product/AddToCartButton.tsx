@@ -2,9 +2,10 @@
 
 import { useState } from "react";
 import { useShallow } from "zustand/react/shallow";
-import { urlFor } from "@/sanity/lib/image";
 import { Loader2 } from "lucide-react";
 import { BsCart3 } from "react-icons/bs";
+
+import { urlFor } from "@/sanity/lib/image";
 import { Product } from "@/sanity.types";
 import { formatPrice } from "@/lib/utils";
 import { useCartStore } from "@/stores/cart-store";
@@ -12,8 +13,9 @@ import { useCartStore } from "@/stores/cart-store";
 type AddToCartButtonProps = { product: Product };
 
 const AddToCartButton = ({ product }: AddToCartButtonProps) => {
-  const { addItem, open } = useCartStore(
+  const { cartId, addItem, open } = useCartStore(
     useShallow((state) => ({
+      cartId: state.cartId,
       addItem: state.addItem,
       open: state.open,
     })),
@@ -37,6 +39,21 @@ const AddToCartButton = ({ product }: AddToCartButtonProps) => {
       image: urlFor(product.image).url(),
       quantity: 1,
     });
+
+    /** Umami Tracking*/
+    try {
+      const anyWindow = window as any;
+
+      if (anyWindow.umami) {
+        anyWindow.umami.track("add_to_cart", {
+          cartId: cartId,
+          productId: product._id,
+          productName: product.title,
+          price: product.price,
+          currency: "USD",
+        });
+      }
+    } catch (e) {}
 
     setIsLoading(false);
     open();
